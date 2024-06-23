@@ -74,7 +74,7 @@ vim.api.nvim_create_autocmd('BufWritePre', {
   command = 'silent! EslintFixAll',
   -- group = vim.api.nvim_create_augroup('MyAutocmdsJavaScripFormatting', {}),
 })
-
+vim.g.skip_ts_context_commentstring_module = true
 -- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 -- 	pattern = { "*.java" },
 -- 	callback = function()

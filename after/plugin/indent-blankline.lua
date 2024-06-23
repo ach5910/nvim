@@ -1,15 +1,24 @@
-local indent_blankline = require("indent_blankline")
+local ibl = require("ibl")
 
-indent_blankline.setup {
-  char = "▏",
-  show_trailing_blankline_indent = false,
-  show_first_indent_level = true,
-  use_treesitter = true,
-  show_current_context = true,
-  buftype_exclude = { "terminal", "nofile" },
-  filetype_exclude = {
-    "help",
-    "packer",
-    "NvimTree",
+-- show_trailing_blankline_indent = false,
+-- show_first_indent_level = true,
+-- use_treesitter = true,
+ibl.setup {
+  whitespace = {
+    remove_blankline_trail = true,
   },
+  exclude = {
+    -- buftypes = { "terminal", "nofile" },
+    filetypes = {
+      "help",
+      "packer",
+      "NvimTree",
+    },
+  },
+  indent = {
+    char = "▏",
+  },
+  scope = {
+    enabled = true,
+  }
 }

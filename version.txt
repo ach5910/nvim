@@ -7,3 +7,11 @@ Compilation: /Library/Developer/CommandLineTools/usr/bin/cc -O2 -g -Og -g -Wall 
   fall-back for $VIM: "/usr/local/share/nvim"
 
 Run :checkhealth for more info
+
+Sun Jun 23 14:45:01 EDT 2024
+----------------------------
+
+NVIM v0.10.0
+Build type: Debug
+LuaJIT 2.1.1713484068
+Run "nvim -V1 -v" for more info

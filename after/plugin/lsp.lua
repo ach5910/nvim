@@ -1,31 +1,5 @@
 local lsp = require('lsp-zero')
-
 local kind_icons = {
-  -- Text = "", 
-  -- Method = "",
-  -- Function = "",
-  -- Constructor = "",
-  -- Field = "",
-  -- Variable = "",
-  -- Class = "",
-  -- Interface = "",
-  -- Module = "",
-  -- Property = "",
-  -- Unit = "",
-  -- Value = "",
-  -- Enum = "",
-  -- Keyword = "",
-  -- Snippet = "",
-  -- Color = "",
-  -- File = "",
-  -- Reference = "",
-  -- Folder = "",
-  -- EnumMember = "",
-  -- Constant = "",
-  -- Struct = "",
-  -- Event = "",
-  -- Operator = "",
-  -- TypeParameter = "",
   Text = "󰉿",
   Method = "󰆧",
   Function = "󰊕",
@@ -55,21 +29,55 @@ local kind_icons = {
 
 lsp.preset('recommended')
 
--- Fix Undefined global 'vim'
-lsp.nvim_workspace()
+require('mason').setup({})
 
-lsp.ensure_installed({
-	"lua_ls",
-	"cssls",
-	"html",
-	"tsserver",
-	"pyright",
-	"bashls",
-	"jsonls",
-	"yamlls",
-	-- "solargraph",
-  "eslint",
+require('mason-lspconfig').setup({
+  ensure_installed = {
+    "lua_ls",
+    "cssls",
+    "html",
+    "tsserver",
+    "pyright",
+    "bashls",
+    "jsonls",
+    "yamlls",
+    "eslint",
+  },
+  handlers = {
+    -- this first function is the "default handler"
+    -- it applies to every language server without a "custom handler"
+    function(server_name)
+      require('lspconfig')[server_name].setup({})
+    end,
+    lua_ls = function()
+      local l_opts = lsp.nvim_lua_ls()
+      require('lspconfig').lua_ls.setup(l_opts)
+    end,
+  }
 })
+lsp.on_attach(function(client, bufnr)
+  -- see :help lsp-zero-keybindings
+  -- to learn the available actions
+  lsp.default_keymaps({buffer = bufnr})
+  local opts = {buffer = bufnr, remap = false}
+
+  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+  vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)
+  vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
+  vim.keymap.set("n", "gI", function() vim.lsp.buf.implementation() end, opts)
+  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
+  vim.keymap.set("n", "gl", function() vim.diagnostic.open_float() end, opts)
+  vim.keymap.set("n", "<leader>lws", function() vim.lsp.buf.workspace_symbol() end, opts)
+  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, opts)
+  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, opts)
+  vim.keymap.set("n", "<leader>la", function() vim.lsp.buf.code_action() end, opts)
+  vim.keymap.set("n", "<leader>lr", function() vim.lsp.buf.rename() end, opts)
+  vim.keymap.set("v", "<leader>lf", function() vim.lsp.buf.format() end, opts)
+  vim.keymap.set({'n', 'x'}, 'gq', function()
+    vim.lsp.buf.format({async = false, timeout_ms = 10000})
+  end, opts)
+
+end)
 
 require('luasnip.loaders.from_vscode').lazy_load()
 require("luasnip").filetype_extend('javascript', { 'javascriptreact' })
@@ -79,7 +87,8 @@ local luasnip = require("luasnip")
 local cmp = require("cmp")
 local cmp_action = require("lsp-zero").cmp_action()
 
-lsp.setup_nvim_cmp({
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+cmp.setup({
   mapping = cmp.mapping.preset.insert({
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
     ['<C-d>'] = cmp.mapping.scroll_docs(4),
@@ -144,14 +153,16 @@ lsp.setup_nvim_cmp({
 		{name = 'buffer'},
     {name = 'path'},
 	},
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  preselect = 'item',
+  completion = {
+    completeopt = 'menu,menuone,noinsert',
+  },
 })
-
--- local signs = {
--- 	 error = "" ,
--- 	 warn = "" ,
--- 	 hint = "" ,
--- 	 info = "" ,
--- }
 local signs = {
 
 	{ name = "DiagnosticSignError", text = "" },
@@ -167,36 +178,12 @@ lsp.set_sign_icons({
 	 info = "" ,
 })
 
----@diagnostic disable-next-line: unused-local
-lsp.on_attach(function(client, bufnr)
-  local opts = {buffer = bufnr, remap = false}
-
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
-  vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)
-  vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
-  vim.keymap.set("n", "gI", function() vim.lsp.buf.implementation() end, opts)
-  vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
-  vim.keymap.set("n", "gl", function() vim.diagnostic.open_float() end, opts)
-  vim.keymap.set("n", "<leader>lws", function() vim.lsp.buf.workspace_symbol() end, opts)
-  vim.keymap.set("n", "]d", function() vim.diagnostic.goto_next() end, opts)
-  vim.keymap.set("n", "[d", function() vim.diagnostic.goto_prev() end, opts)
-  vim.keymap.set("n", "<leader>la", function() vim.lsp.buf.code_action() end, opts)
-  vim.keymap.set("n", "<leader>lr", function() vim.lsp.buf.rename() end, opts)
-  vim.keymap.set("v", "<leader>lf", function() vim.lsp.buf.format() end, opts)
-  vim.keymap.set({'n', 'x'}, 'gq', function()
-    vim.lsp.buf.format({async = false, timeout_ms = 10000})
-  end, opts)
-
-  -- vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
-end)
-
 lsp.format_on_save({
   format_opts = {
     async = false,
     timeout_ms = 1000,
   },
   servers = {
-    -- ['eslint'] = {'javascript', 'javascriptreact', 'typescript', 'typescriptreact'},
     ['null-ls'] = {'javascript', 'javascriptreact', 'typescript', 'typescriptreact'},
   }
 })

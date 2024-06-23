@@ -5,7 +5,7 @@ vim.cmd [[packadd packer.nvim]]
 
 local packer = require('packer')
 packer.init {
-  snapshot = "stable2",
+  snapshot = "v2.1",
 }
 -- /Users/aaronhunt/.cache/nvim_profiles/lsp-zero/nvim/packer.nvim/stable
 return packer.startup(function(use)
@@ -13,7 +13,7 @@ return packer.startup(function(use)
   use 'wbthomason/packer.nvim'
 
   use {
-	  'nvim-telescope/telescope.nvim', tag = '0.1.3',
+	  'nvim-telescope/telescope.nvim',
 	  -- or                            , branch = '0.1.x',
 	  requires = { {'nvim-lua/plenary.nvim'} }
   }
@@ -39,7 +39,7 @@ return packer.startup(function(use)
 
   use {
 	  'VonHeikemen/lsp-zero.nvim',
-	  branch = 'v1.x',
+	  branch = 'v3.x',
 	  requires = {
 		  -- LSP Support
 		  {'neovim/nvim-lspconfig'},             -- Required
@@ -76,7 +76,7 @@ return packer.startup(function(use)
   use {
     "antosha417/nvim-lsp-file-operations", -- Auto updates imports for open buffers when a file is moved 
     config = function ()
-      require("lsp-file-operations").setup({ debug = true })
+      require("lsp-file-operations").setup({})
     end
   }
   use('sindrets/diffview.nvim') -- Provides git diff view and file history
