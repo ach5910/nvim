@@ -1,0 +1,9 @@
+NVIM v0.9.1
+Build type: RelWithDebInfo
+LuaJIT 2.1.0-beta3
+Compilation: /Library/Developer/CommandLineTools/usr/bin/cc -O2 -g -Og -g -Wall -Wextra -pedantic -Wno-unused-parameter -Wstrict-prototypes -std=gnu99 -Wshadow -Wconversion -Wvla -Wdouble-promotion -Wmissing-noreturn -Wmissing-format-attribute -Wmissing-prototypes -Wimplicit-fallthrough -fdiagnostics-color=always -fstack-protector-strong -DUNIT_TESTING -DINCLUDE_GENERATED_DECLARATIONS -I/Users/aaronhunt/projects/neovim/.deps/usr/include/luajit-2.1 -I/opt/homebrew/opt/gettext/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/build/src/nvim/auto -I/Users/aaronhunt/projects/neovim/build/include -I/Users/aaronhunt/projects/neovim/build/cmake.config -I/Users/aaronhunt/projects/neovim/src -I/Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include -I/Users/aaronhunt/projects/neovim/.deps/usr/include
+
+   system vimrc file: "$VIM/sysinit.vim"
+  fall-back for $VIM: "/usr/local/share/nvim"
+
+Run :checkhealth for more info

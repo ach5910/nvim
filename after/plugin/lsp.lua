@@ -1,31 +1,56 @@
 local lsp = require('lsp-zero')
 
 local kind_icons = {
-	Text = "",
-	Method = "",
-	Function = "",
-	Constructor = "",
-	Field = "",
-	Variable = "",
-	Class = "",
-	Interface = "",
-	Module = "",
-	Property = "",
-	Unit = "",
-	Value = "",
-	Enum = "",
-	Keyword = "",
-	Snippet = "",
-	Color = "",
-	File = "",
-	Reference = "",
-	Folder = "",
-	EnumMember = "",
-	Constant = "",
-	Struct = "",
-	Event = "",
-	Operator = "",
-	TypeParameter = "",
+  -- Text = "", 
+  -- Method = "",
+  -- Function = "",
+  -- Constructor = "",
+  -- Field = "",
+  -- Variable = "",
+  -- Class = "",
+  -- Interface = "",
+  -- Module = "",
+  -- Property = "",
+  -- Unit = "",
+  -- Value = "",
+  -- Enum = "",
+  -- Keyword = "",
+  -- Snippet = "",
+  -- Color = "",
+  -- File = "",
+  -- Reference = "",
+  -- Folder = "",
+  -- EnumMember = "",
+  -- Constant = "",
+  -- Struct = "",
+  -- Event = "",
+  -- Operator = "",
+  -- TypeParameter = "",
+  Text = "󰉿",
+  Method = "󰆧",
+  Function = "󰊕",
+  Constructor = "",
+  Field = "󰜢",
+  Variable = "󰀫",
+  Class = "󰠱",
+  Interface = "",
+  Module = "",
+  Property = "󰜢",
+  Unit = "󰑭",
+  Value = "󰎠",
+  Enum = "",
+  Keyword = "󰌋",
+  Snippet = "",
+  Color = "󰏘",
+  File = "󰈙",
+  Reference = "󰈇",
+  Folder = "󰉋",
+  EnumMember = "",
+  Constant = "󰏿",
+  Struct = "󰙅",
+  Event = "",
+  Operator = "󰆕",
+  TypeParameter = "",
 }
 
 lsp.preset('recommended')
@@ -42,7 +67,7 @@ lsp.ensure_installed({
 	"bashls",
 	"jsonls",
 	"yamlls",
-	"solargraph",
+	-- "solargraph",
   "eslint",
 })
 
@@ -131,14 +156,14 @@ local signs = {
 
 	{ name = "DiagnosticSignError", text = "" },
 	{ name = "DiagnosticSignWarn", text = "" },
-	{ name = "DiagnosticSignHint", text = "" },
+	{ name = "DiagnosticSignHint", text = "⚑" },
 	{ name = "DiagnosticSignInfo", text = "" },
 }
 
 lsp.set_sign_icons({
 	 error = "" ,
 	 warn = "" ,
-	 hint = "" ,
+	 hint = "⚑" ,
 	 info = "" ,
 })
 
@@ -158,23 +183,37 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>la", function() vim.lsp.buf.code_action() end, opts)
   vim.keymap.set("n", "<leader>lr", function() vim.lsp.buf.rename() end, opts)
   vim.keymap.set("v", "<leader>lf", function() vim.lsp.buf.format() end, opts)
+  vim.keymap.set({'n', 'x'}, 'gq', function()
+    vim.lsp.buf.format({async = false, timeout_ms = 10000})
+  end, opts)
+
   -- vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
 end)
 
+lsp.format_on_save({
+  format_opts = {
+    async = false,
+    timeout_ms = 1000,
+  },
+  servers = {
+    -- ['eslint'] = {'javascript', 'javascriptreact', 'typescript', 'typescriptreact'},
+    ['null-ls'] = {'javascript', 'javascriptreact', 'typescript', 'typescriptreact'},
+  }
+})
+
 lsp.setup()
 
--- local null_ls = require('null-ls')
--- local null_opts = lsp.build_options('null-ls', {})
---
--- null_ls.setup({
---   on_attach = function(client, bufnr)
---     null_opts.on_attach(client, bufnr)
---   end,
---   sources = {
---     null_ls.builtins.diagnostics.eslint_d,
---     null_ls.builtins.formatting.prettierd,
---   }
--- })
+local null_ls = require('null-ls')
+local null_opts = lsp.build_options('null-ls', {})
+
+null_ls.setup({
+  on_attach = function(client, bufnr)
+    null_opts.on_attach(client, bufnr)
+  end,
+  sources = {
+    null_ls.builtins.formatting.prettierd,
+  }
+})
 
 for _, sign in ipairs(signs) do
   vim.fn.sign_define(sign.name, { texthl = sign.name, text = sign.text, numhl = "" })

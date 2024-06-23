@@ -4,9 +4,9 @@
 vim.cmd [[packadd packer.nvim]]
 
 local packer = require('packer')
--- packer.init {
---   snapshot = "stable",
--- }
+packer.init {
+  snapshot = "stable2",
+}
 -- /Users/aaronhunt/.cache/nvim_profiles/lsp-zero/nvim/packer.nvim/stable
 return packer.startup(function(use)
   -- Packer can manage itself

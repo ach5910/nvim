@@ -59,6 +59,9 @@ vim.keymap.set("n", "<leader>s", [[:%s/\<<C-r><C-w>\>/<C-r><C-w>/gI<Left><Left><
 
 -- NvimTree
 vim.keymap.set("n", "<leader>n", ":NvimTreeToggle<CR>", opts)
+vim.keymap.set("n", "<leader>do", ":DiffviewOpen<CR>", { silent = true })
+vim.keymap.set("n", "<leader>dc", ":DiffviewClose<CR>", { silent = true })
+vim.keymap.set("n", "<leader>df", ":DiffviewFileHistory %<CR>", { silent = true })
 
 -- Telescope
 -- vim.keymap.set("n", "<leader>ff", ":Telescope find_files<CR>", opts)

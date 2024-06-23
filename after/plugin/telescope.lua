@@ -3,14 +3,37 @@ local builtin = require('telescope.builtin')
 local actions = require("telescope.actions")
 local multi_rg = require("user.multi-rg")
 
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = "TelescopeResults",
+	callback = function(ctx)
+		vim.api.nvim_buf_call(ctx.buf, function()
+			vim.fn.matchadd("TelescopeParent", "\t\t.*$")
+			vim.api.nvim_set_hl(0, "TelescopeParent", { link = "Comment" })
+		end)
+	end,
+})
+
+local function filenameFirst(_, path)
+	local tail = vim.fs.basename(path)
+	local parent = vim.fs.dirname(path)
+	if parent == "." then return tail end
+	return string.format("%s\t\t%s", tail, parent)
+end
+
+-- require("telescope").setup {
+-- 	pickers = {
+-- 		find_files = {
+-- 			path_display = filenameFirst,
+-- 		}
+-- 	}
+-- }
 vim.keymap.set('n', '<leader>ff', function()
   builtin.find_files({
     find_command = {
       'rg',
       '--files',
-      '--glob=*.js',
-      '--glob=!*test*',
-      '--glob=!*styles*',
+      '--glob=*.{js,ts,jsx,tsx}',
+      '--glob=!*stories*',
     }
   })
 end)
@@ -43,4 +66,9 @@ telescope.setup {
       },
     },
   },
+	pickers = {
+		find_files = {
+			path_display = filenameFirst,
+		},
+	},
 }

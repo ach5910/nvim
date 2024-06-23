@@ -69,6 +69,12 @@ vim.api.nvim_create_autocmd({ "TextYankPost" }, {
 	end,
 })
 
+vim.api.nvim_create_autocmd('BufWritePre', {
+  pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
+  command = 'silent! EslintFixAll',
+  -- group = vim.api.nvim_create_augroup('MyAutocmdsJavaScripFormatting', {}),
+})
+
 -- vim.api.nvim_create_autocmd({ "BufWritePost" }, {
 -- 	pattern = { "*.java" },
 -- 	callback = function()
