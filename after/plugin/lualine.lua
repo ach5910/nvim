@@ -1,3 +1,4 @@
+if vim.g.vscode then return end
 local lualine = require("lualine")
 
 local hide_in_width = function()

@@ -1,4 +1,4 @@
-
+if vim.g.vscode then return end
 local bufferline = require("bufferline")
 
 bufferline.setup {

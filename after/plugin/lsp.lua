@@ -1,3 +1,4 @@
+if vim.g.vscode then return end
 local lsp = require('lsp-zero')
 local kind_icons = {
   Text = "󰉿",
@@ -25,6 +26,8 @@ local kind_icons = {
   Event = "",
   Operator = "󰆕",
   TypeParameter = "",
+  Copilot = "",
+  CmpItemKindCopilot = "",
 }
 
 lsp.preset('recommended')
@@ -55,15 +58,18 @@ require('mason-lspconfig').setup({
     end,
   }
 })
+
+
+local telescope_builtin = require('telescope.builtin')
 lsp.on_attach(function(client, bufnr)
   -- see :help lsp-zero-keybindings
   -- to learn the available actions
   lsp.default_keymaps({buffer = bufnr})
   local opts = {buffer = bufnr, remap = false}
 
-  vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
+  vim.keymap.set("n", "gd", telescope_builtin.lsp_definitions, opts)
   vim.keymap.set("n", "gD", function() vim.lsp.buf.declaration() end, opts)
-  vim.keymap.set("n", "gr", function() vim.lsp.buf.references() end, opts)
+  vim.keymap.set("n", "gr", telescope_builtin.lsp_references, opts)
   vim.keymap.set("n", "gI", function() vim.lsp.buf.implementation() end, opts)
   vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
   vim.keymap.set("n", "gl", function() vim.diagnostic.open_float() end, opts)
@@ -81,13 +87,21 @@ end)
 
 require('luasnip.loaders.from_vscode').lazy_load()
 require("luasnip").filetype_extend('javascript', { 'javascriptreact' })
+require("luasnip").filetype_extend('typescript', { 'typescriptreact' })
 require("luasnip").config.setup({store_selection_keys="<Tab>"})
 
 local luasnip = require("luasnip")
 local cmp = require("cmp")
 local cmp_action = require("lsp-zero").cmp_action()
+cmp.event:on("menu_opened", function()
+  vim.b.copilot_suggestion_hidden = true
+end)
 
-vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
+cmp.event:on("menu_closed", function()
+  vim.b.copilot_suggestion_hidden = false
+end)
+
+vim.opt.completeopt = {'menu', 'menuone', 'noselect'} -- remone to prevent preselect
 cmp.setup({
   mapping = cmp.mapping.preset.insert({
     ['<C-u>'] = cmp.mapping.scroll_docs(-4),
@@ -96,22 +110,24 @@ cmp.setup({
 		["<C-j>"] = cmp.mapping.select_next_item(),
     ['<C-n>'] = cmp_action.luasnip_jump_forward(),
     ['<C-p>'] = cmp_action.luasnip_jump_backward(),
-		["<C-Space>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
-		["<C-e>"] = cmp.mapping({
+		["<C-e>"] = cmp.mapping(cmp.mapping.complete(), { "i", "c" }),
+		["<C-Space>"] = cmp.mapping({
 			i = cmp.mapping.abort(),
 			c = cmp.mapping.close(),
 		}),
 		-- Accept currently selected item. If none selected, `select` first item.
 		-- Set `select` to `false` to only confirm explicitly selected items.
-		["<CR>"] = cmp.mapping.confirm({ select = true }),
+		["<CR>"] = cmp.mapping.confirm({ select = false }),
 		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
-			elseif luasnip.expandable() then
-				luasnip.expand()
-			elseif luasnip.expand_or_jumpable() then
-				luasnip.expand_or_jump()
-			else
+      elseif luasnip.expand_or_jumpable() then
+        luasnip.expand_or_jump()
+      elseif require("copilot.suggestion").is_visible() then
+        require("copilot.suggestion").accept()
+        -- elseif luasnip.expandable() then
+        -- 	luasnip.expand()
+      else
 				fallback()
 			end
 		end, {
@@ -140,6 +156,7 @@ cmp.setup({
 				nvim_lua = "",
 				luasnip = "",
 				buffer = "",
+        -- copilot = "",
 				path = "",
 				emoji = "",
 			})[entry.source.name]
@@ -151,6 +168,7 @@ cmp.setup({
 		{name = 'nvim_lua'},
 		{name = 'luasnip'},
 		{name = 'buffer'},
+		-- {name = 'copilot'},
     {name = 'path'},
 	},
   snippet = {
@@ -158,9 +176,12 @@ cmp.setup({
       require('luasnip').lsp_expand(args.body)
     end,
   },
-  preselect = 'item',
+  preselect = "item", -- "none" to prevent 
   completion = {
     completeopt = 'menu,menuone,noinsert',
+  }, -- remove to prevent preselect
+  experimental = {
+    ghost_text = true,
   },
 })
 local signs = {

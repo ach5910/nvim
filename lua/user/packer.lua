@@ -1,13 +1,13 @@
 -- This file can be loaded by calling `lua require('plugins')` from your init.vim
-
 -- Only required if you have packer configured as `opt`
 vim.cmd [[packadd packer.nvim]]
 
 local packer = require('packer')
-packer.init {
-  snapshot = "v2.1",
-}
+-- packer.init {
+--   snapshot = "v2.2",
+-- }
 -- /Users/aaronhunt/.cache/nvim_profiles/lsp-zero/nvim/packer.nvim/stable
+local vscode = vim.g.vscode == 1
 return packer.startup(function(use)
   -- Packer can manage itself
   use 'wbthomason/packer.nvim'
@@ -15,12 +15,23 @@ return packer.startup(function(use)
   use {
 	  'nvim-telescope/telescope.nvim',
 	  -- or                            , branch = '0.1.x',
+    cond = function()
+      return not vscode
+    end,
 	  requires = { {'nvim-lua/plenary.nvim'} }
   }
-  use("akinsho/bufferline.nvim") -- Add open buffer tabs
+  use {
+    "akinsho/bufferline.nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- Add open buffer tabs
   use({
 	  'rose-pine/neovim',
 	  as = 'rose-pine',
+    cond = function()
+      return not vscode
+    end,
     -- config = function()
     --   vim.cmd('colorscheme rose-pine')
     -- end
@@ -28,18 +39,65 @@ return packer.startup(function(use)
   use({
     "folke/tokyonight.nvim",
     -- as = 'tokyonight',
+    cond = function()
+      return not vscode
+    end,
     config = function()
       vim.cmd('colorscheme tokyonight-moon')
     end
   })
-  use('nvim-treesitter/nvim-treesitter', { run = ':TSUpdate'} )
-  use('nvim-treesitter/nvim-treesitter-context')
-  use('theprimeagen/harpoon')
-  use('mbbill/undotree')
+  use {
+    "EdenEast/nightfox.nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- Packer
+  use {
+    'nvim-treesitter/nvim-treesitter',
+     run = ':TSUpdate',
+  }
+  use {
+    'nvim-treesitter/nvim-treesitter-context',
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    'theprimeagen/harpoon',
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    'mbbill/undotree',
+    cond = function()
+      return not vscode
+    end,
+  }
 
+  use {
+    "zbirenbaum/copilot.lua",
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    "zbirenbaum/copilot-cmp",
+    cond = function()
+      return not vscode
+    end,
+    after = { "copilot.lua" },
+    config = function ()
+      require("copilot_cmp").setup()
+    end
+  }
+  use("brenoprata10/nvim-highlight-colors") -- colors hex, rgb, hsl, etc
   use {
 	  'VonHeikemen/lsp-zero.nvim',
 	  branch = 'v3.x',
+    cond = function()
+      return not vscode
+    end,
 	  requires = {
 		  -- LSP Support
 		  {'neovim/nvim-lspconfig'},             -- Required
@@ -59,25 +117,94 @@ return packer.startup(function(use)
 		  {'rafamadriz/friendly-snippets'}, -- Optional
 	  }
   }
-  use('christoomey/vim-tmux-navigator') -- Lets <C-h> and <C-l> nav to tmux
-  use("jose-elias-alvarez/null-ls.nvim") -- allows formatters and linters to be lsps (enabled eslint_d)
-  use("kyazdani42/nvim-web-devicons")
-  use("kyazdani42/nvim-tree.lua")
-  use("RRethy/vim-illuminate") -- Will soft highlight matches for cursor
-  use("lukas-reineke/indent-blankline.nvim") -- Shows vertical line for blocks/scopes
-  use("moll/vim-bbye") -- Allows bufferline to call Bdelete
-  use("nvim-lualine/lualine.nvim") -- Provide botton line context
-  use("kylechui/nvim-surround") -- Advance tpope surround
-  use("lewis6991/gitsigns.nvim")
-  use("numToStr/Comment.nvim") -- Allows auto commenting shortcut
-  use("JoosepAlviste/nvim-ts-context-commentstring") -- Support Comment.nvim for jsx commenting
-  use("goolord/alpha-nvim") -- Empty screen prompt
-  use("windwp/nvim-autopairs") -- Autopairs, integrates with both cmp and treesitter
+  use {
+    'christoomey/vim-tmux-navigator',
+    cond = function()
+      return not vscode
+    end,
+  } -- Lets <C-h> and <C-l> nav to tmux
+  use {
+    "jose-elias-alvarez/null-ls.nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- allows formatters and linters to be lsps (enabled eslint_d)
+  use {
+    "kyazdani42/nvim-web-devicons",
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    "kyazdani42/nvim-tree.lua",
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    "RRethy/vim-illuminate",
+  } -- Will soft highlight matches for cursor
+  use {
+    "lukas-reineke/indent-blankline.nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- Shows vertical line for blocks/scopes
+  use {
+    "moll/vim-bbye",
+    cond = function()
+      return not vscode
+    end,
+  } -- Allows bufferline to call Bdelete
+  use {
+    "nvim-lualine/lualine.nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- Provide botton line context
+  use {
+    "kylechui/nvim-surround",
+  } -- Advance tpope surround
+  use {
+    "lewis6991/gitsigns.nvim",
+    cond = function()
+      return not vscode
+    end,
+  }
+  use {
+    "numToStr/Comment.nvim",
+  } -- Allows auto commenting shortcut
+  use {
+    "JoosepAlviste/nvim-ts-context-commentstring",
+    cond = function()
+      return not vscode
+    end,
+  } -- Support Comment.nvim for jsx commenting
+  use {
+    "goolord/alpha-nvim",
+    cond = function()
+      return not vscode
+    end,
+  } -- Empty screen prompt
+  use {
+    "windwp/nvim-autopairs",
+  } -- Autopairs, integrates with both cmp and treesitter
   use {
     "antosha417/nvim-lsp-file-operations", -- Auto updates imports for open buffers when a file is moved 
+    cond = function()
+      return not vscode
+    end,
     config = function ()
       require("lsp-file-operations").setup({})
     end
   }
   use('sindrets/diffview.nvim') -- Provides git diff view and file history
+  use {
+    'MeanderingProgrammer/markdown.nvim',
+    as = "render-markdown", -- "render-markdown
+    after = 'nvim-treesitter',
+    cond = function()
+      return not vscode
+    end,
+  }
 end)

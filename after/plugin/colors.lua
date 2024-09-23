@@ -11,6 +11,7 @@
 -- ColorMyPencils()
 function DisableDiagHighlight()
   vim.api.nvim_set_hl(0, 'DiagnosticUnnecessary', {})
+  -- vim.api.nvim_set_hl(0, '@tag.tsx', { link = "Special" }) -- change JSX component color
 end
 
 DisableDiagHighlight()

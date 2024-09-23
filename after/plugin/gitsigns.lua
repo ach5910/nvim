@@ -1,3 +1,4 @@
+if vim.g.vscode then return end
 local gitsigns = require("gitsigns")
 
 gitsigns.setup{
@@ -8,8 +9,8 @@ gitsigns.setup{
     topdelete = { text = "‾" },
     changedelete = { text = "~" },
   },
-  numhl = true,
-  linehl = true,
+  numhl = false,
+  linehl = false,
   on_attach = function (bufnr)
       
     local opts = {buffer = bufnr, remap = false}

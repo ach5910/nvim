@@ -1,3 +1,4 @@
+if vim.g.vscode then return end
 require'nvim-treesitter.configs'.setup {
   -- A list of parser names, or "all" (the five listed parsers should always be installed)
   ensure_installed = { "javascript", "typescript", "ruby", "c", "lua", "vim", "vimdoc", "query" },
