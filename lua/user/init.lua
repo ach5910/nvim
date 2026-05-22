@@ -1,7 +1,6 @@
 require("user.keymaps")
 require("user.options")
 if vim.g.vscode then
-    -- VSCode extension
 else
     -- ordinary Neovim
   local auto_remove = require("user.auto-remove")
@@ -79,13 +78,15 @@ else
           local spaces = vim.fn.indent(i)
           -- Find the position of the first non-whitespace character that isn't '▏'
           local first_non_whitespace_not_indent_char = line_content:find("[^%s▏]")
-
-          if first_non_whitespace_not_indent_char and (spaces >= 8 or line_content:match("^%s*%s%s%s%s%s%s%s%s%s%s%s")) then
-            vim.api.nvim_buf_set_extmark(bufnr, ns_id, i-1, first_non_whitespace_not_indent_char - #text - 2, {
-              virt_text = {{text, 'LineNr'}},
-              virt_text_pos = 'overlay',  -- Change to 'eol' if you want to place it after the line content
-              hl_mode = "combine",
-            })
+          if  first_non_whitespace_not_indent_char then 
+            local col = first_non_whitespace_not_indent_char - #text - 2
+            if first_non_whitespace_not_indent_char and (spaces >= 8 or line_content:match("^%s*%s%s%s%s%s%s%s%s%s%s%s")) and col >= 0 then
+              vim.api.nvim_buf_set_extmark(bufnr, ns_id, i-1, first_non_whitespace_not_indent_char - #text - 2, {
+                virt_text = {{text, 'LineNr'}},
+                virt_text_pos = 'overlay',  -- Change to 'eol' if you want to place it after the line content
+                hl_mode = "combine",
+              })
+            end
           end
         end
       end

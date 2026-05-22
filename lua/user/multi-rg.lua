@@ -19,6 +19,7 @@ return function(opts)
       ["js"] = "*.js",
       ["ts"] = "*.{ts,tsx}",
       ["json"] = "*.json",
+      ["gq"] = "*.graphql",
     }
   opts.pattern = opts.pattern or "%s"
 

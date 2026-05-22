@@ -1,3 +1,4 @@
+if vim.g.vscode then return end
 require('nvim-highlight-colors').setup({
   render = 'background',
   	---Highlight hex colors, e.g. '#FFFFFF'

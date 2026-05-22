@@ -44,6 +44,7 @@ vim.keymap.set('n', '<leader>ft', function ()
 end)
 vim.keymap.set('n', '<leader>fg', multi_rg, {})
 vim.keymap.set('n', '<leader>fb', builtin.buffers, {})
+vim.keymap.set('n', '<leader>fo', builtin.oldfiles, {})
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 vim.keymap.set('n', '<leader>fs', function()
 	builtin.grep_string({ search = vim.fn.input("Grep > ")})
@@ -85,6 +86,45 @@ local function multi_select(prompt_bufnr)
   -- if does not have multi selection, open single file
   require("telescope.actions").file_edit(prompt_bufnr)
 end
+
+local function get_entry_path(entry)
+  -- Telescope entries vary by picker; these cover common cases.
+  return entry.path or entry.filename or entry.value or entry[1]
+end
+
+
+
+local function paste_at_paths(prompt_bufnr)
+  local picker = action_state.get_current_picker(prompt_bufnr)
+
+  -- multi-selection wins
+  local multi = picker:get_multi_selection() or {}
+  local entries = (#multi > 0) and multi or { action_state.get_selected_entry() }
+
+  local parts = {}
+  for _, e in ipairs(entries) do
+    if e then
+      local full = get_entry_path(e)
+      if full then
+        local rel = vim.fn.fnamemodify(full, ":.")
+        table.insert(parts, "@" .. rel)
+      end
+    end
+  end
+
+  if #parts == 0 then return end
+
+  local text = table.concat(parts, "\n") -- change to " " if you want space-separated
+
+  -- close Telescope, then paste into the original window
+  actions.close(prompt_bufnr)
+
+  vim.schedule(function()
+    -- put at cursor (more “insert-like” than normal-mode p)
+    vim.api.nvim_put(vim.split(text, "\n"), "c", true, true)
+  end)
+end
+
 telescope.setup {
   defaults = {
 
@@ -100,9 +140,11 @@ telescope.setup {
         ["<C-j>"] = actions.move_selection_next,
         ["<C-k>"] = actions.move_selection_previous,
         ["<CR>"] = multi_select,
+        ["<C-y>"] = paste_at_paths
       },
       n = {
         ["<leader>qf"] = actions.smart_send_to_qflist + actions.open_qflist,
+        ["<C-y>"] = paste_at_paths
         --   ["<leader>sr"] = multi_find_and_replace,
       },
     },
@@ -113,3 +155,4 @@ telescope.setup {
 		},
 	},
 }
+

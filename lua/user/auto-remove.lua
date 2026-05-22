@@ -1,8 +1,22 @@
 local dump = require('user.dump')
 -- Table to keep track of saved buffers
 local saved_buffers = {}
+-- Add toggle state
+local enabled = true
 
 local M = {}
+
+-- Add toggle function
+M.toggle = function()
+    enabled = not enabled
+    -- Notify user of new state
+    vim.notify("Auto-remove " .. (enabled and "enabled" or "disabled"))
+end
+
+-- Add function to check if enabled
+M.is_enabled = function()
+    return enabled
+end
 
 -- Function to mark a buffer as saved
 M.mark_buffer_saved =  function(bufnr)
@@ -11,6 +25,9 @@ end
 
 -- Function to check if a buffer is saved
 M.is_buffer_saved = function(bufnr)
+    if not enabled then
+        return true -- Always return true when disabled to prevent auto-removal
+    end
     return saved_buffers[bufnr] == true
 end
 -- Function to check if a buffer is a regular file
